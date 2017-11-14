@@ -8,7 +8,7 @@ using Android.Views;
 
 namespace App3
 {
-	
+
 	[Activity(Label = "App3", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
@@ -56,33 +56,62 @@ namespace App3
 
 		private void FireTimerButton_Click(object sender, System.EventArgs e)
 		{
-			var alarmIntent = new Intent(this, typeof(MyBroadcastReceiver)); //アラームレシーバはブロードキャストを継承
-											 ////alarmIntent.PutExtra("title", cnt.ToString() + "回目の通知です");      //タイトルって名前でキーを指定する
-											 ////alarmIntent.PutExtra("message", "World!");
-			var keyList = new System.Collections.Generic.List<string>(4);
-			keyList.Add(ApiKey);
-			keyList.Add(ApiSecret);
-			keyList.Add(tokens.AccessToken);
-			keyList.Add(tokens.AccessTokenSecret);
+			//var keyList = new System.Collections.Generic.List<string>(4);
+			//keyList.Add(ApiKey);
+			//keyList.Add(ApiSecret);
+			//keyList.Add(tokens.AccessToken);
+			//keyList.Add(tokens.AccessTokenSecret);
+			var keyList = new System.Collections.Generic.List<string>(4)
+			{
+				ApiKey,
+				ApiSecret,
+				tokens.AccessToken,
+				tokens.AccessTokenSecret
+			};
+			var alarmIntent = new Intent[3];
+			for (int i = 0; i < alarmIntent.Length; i++)
+			{
+				alarmIntent[i] = new Intent(this, typeof(MyBroadcastReceiver)); //アラームレシーバはブロードキャストを継承
+				alarmIntent[i].PutStringArrayListExtra("Keys", keyList);
+				alarmIntent[i].PutExtra("Meal", i);
+			}
 
-			alarmIntent.PutStringArrayListExtra("Keys", keyList);
-			var pending = PendingIntent.GetBroadcast(this, , alarmIntent, PendingIntentFlags.UpdateCurrent);
+			var pending = new PendingIntent[3];
+			for (int i = 0; i < pending.Length; i++)
+			{
+				pending[i] = PendingIntent.GetBroadcast(this, i, alarmIntent[i], PendingIntentFlags.UpdateCurrent);
+			}
 
 			var alarmManager = (AlarmManager)GetSystemService(AlarmService);
-			Java.Util.Calendar cal = Java.Util.Calendar.GetInstance(Java.Util.TimeZone.Default);
- 
-			cal.Set(Java.Util.CalendarField.Year,		cal.Get(Java.Util.CalendarField.Year));
-			cal.Set(Java.Util.CalendarField.Month,		cal.Get(Java.Util.CalendarField.Month));
-			cal.Set(Java.Util.CalendarField.DayOfMonth,	cal.Get(Java.Util.CalendarField.DayOfMonth));
-			cal.Set(Java.Util.CalendarField.HourOfDay,	cal.Get(Java.Util.CalendarField.HourOfDay));
-			//cal.Set(Java.Util.CalendarField.Minute,		cal.Get(Java.Util.CalendarField.Minute));
-			//cal.Set(Java.Util.CalendarField.Second,		cal.Get(Java.Util.CalendarField.Second));
-			cal.Set(Java.Util.CalendarField.Minute, 21);
-			cal.Set(Java.Util.CalendarField.Second,0);
-			cal.Set(Java.Util.CalendarField.Millisecond, 0);
+			var cal = new Java.Util.Calendar[3];
+			for (int i = 0; i < cal.Length; i++)
+			{
+				cal[i] = Java.Util.Calendar.GetInstance(Java.Util.TimeZone.Default);
 
+				//明日の年、月、日を取得
+				cal[i].Add(Java.Util.CalendarField.DayOfYear, 1);
 
-			alarmManager.Set(AlarmType.RtcWakeup, cal.TimeInMillis, pending);
+				cal[i].Set(Java.Util.CalendarField.Year, cal[i].Get(Java.Util.CalendarField.Year));
+				cal[i].Set(Java.Util.CalendarField.Month, cal[i].Get(Java.Util.CalendarField.Month));
+				cal[i].Set(Java.Util.CalendarField.DayOfMonth, cal[i].Get(Java.Util.CalendarField.DayOfMonth));
+				cal[i].Set(Java.Util.CalendarField.HourOfDay, cal[i].Get(Java.Util.CalendarField.HourOfDay));
+
+				cal[i].Set(Java.Util.CalendarField.Minute, 20);
+				cal[i].Set(Java.Util.CalendarField.Second, 0);
+				cal[i].Set(Java.Util.CalendarField.Millisecond, 0);
+			}
+
+			cal[(int)Meal.breakfast].Set(Java.Util.CalendarField.HourOfDay, 7);
+			cal[(int)Meal.breakfast].Set(Java.Util.CalendarField.Minute, 15);
+
+			cal[(int)Meal.lunch].Set(Java.Util.CalendarField.HourOfDay, 11);
+
+			cal[(int)Meal.dinner].Set(Java.Util.CalendarField.HourOfDay, 17);
+
+			for (int i = 0; i < cal.Length; i++)
+			{
+				alarmManager.Set(AlarmType.RtcWakeup, cal[i].TimeInMillis, pending[i]);
+			}
 		}
 
 		private void TimelineButton_Click(object sender, System.EventArgs e)
