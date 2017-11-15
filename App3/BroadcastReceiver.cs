@@ -24,17 +24,18 @@ namespace App3
 			//token.Statuses.Update(new { status = "でもついーと２" });
 			Toast.MakeText(context, "ツイートしました", ToastLength.Long).Show();
 
-			
-
-			switch (intent.GetIntExtra("Meal", 4))
+			switch (intent.GetIntExtra("Meal", -1))
 			{
 				case (int)Meal.breakfast:
-
+					token.Statuses.Update(new { status = "朝ごはんです！！" });
 					break;
 
 				case (int)Meal.lunch:
+					token.Statuses.Update(new { status = "昼ごはんです！！" });
 					break;
+
 				case (int)Meal.dinner:
+					token.Statuses.Update(new { status = "夜ご飯です！！" });
 					break;
 
 				default:
@@ -114,5 +115,4 @@ namespace App3
 		//			.getSystemService(Context.ALARM_SERVICE);
 		//	alarm.cancel(action);
 		//}
-	}
 }

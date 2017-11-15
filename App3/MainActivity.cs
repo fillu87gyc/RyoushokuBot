@@ -52,14 +52,8 @@ namespace App3
 			}
 
 		}
-
 		private void FireTimerButton_Click(object sender, System.EventArgs e)
 		{
-			//var keyList = new System.Collections.Generic.List<string>(4);
-			//keyList.Add(ApiKey);
-			//keyList.Add(ApiSecret);
-			//keyList.Add(tokens.AccessToken);
-			//keyList.Add(tokens.AccessTokenSecret);
 			var keyList = new System.Collections.Generic.List<string>(4)
 			{
 				ApiKey,
@@ -90,11 +84,11 @@ namespace App3
 				//明日の年、月、日を取得
 				cal[i].Add(Java.Util.CalendarField.DayOfYear, 1);
 
-				cal[i].Set(Java.Util.CalendarField.Year, cal[i].Get(Java.Util.CalendarField.Year));
-				cal[i].Set(Java.Util.CalendarField.Month, cal[i].Get(Java.Util.CalendarField.Month));
-				cal[i].Set(Java.Util.CalendarField.DayOfMonth, cal[i].Get(Java.Util.CalendarField.DayOfMonth));
-				cal[i].Set(Java.Util.CalendarField.HourOfDay, cal[i].Get(Java.Util.CalendarField.HourOfDay));
-
+				/* cal[i].Set(Java.Util.CalendarField.Year, cal[i].Get(Java.Util.CalendarField.Year));
+				 * cal[i].Set(Java.Util.CalendarField.Month, cal[i].Get(Java.Util.CalendarField.Month)); 
+				 * cal[i].Set(Java.Util.CalendarField.DayOfMonth, cal[i].Get(Java.Util.CalendarField.DayOfMonth)); 
+				 * cal[i].Set(Java.Util.CalendarField.HourOfDay, cal[i].Get(Java.Util.CalendarField.HourOfDay)); 
+				 */ 
 				cal[i].Set(Java.Util.CalendarField.Minute, 20);
 				cal[i].Set(Java.Util.CalendarField.Second, 0);
 				cal[i].Set(Java.Util.CalendarField.Millisecond, 0);
@@ -109,7 +103,7 @@ namespace App3
 
 			for (int i = 0; i < cal.Length; i++)
 			{
-				alarmManager.Set(AlarmType.RtcWakeup, cal[i].TimeInMillis, pending[i]);
+				alarmManager.SetRepeating(AlarmType.RtcWakeup, cal[i].TimeInMillis,AlarmManager.IntervalDay, pending[i]);
 			}
 		}
 
@@ -156,9 +150,6 @@ namespace App3
 			Intent i = new Intent(Intent.ActionView, uri);
 			StartActivity(i);
 		}
-		private Context context;
-
-		
 	}
 	enum Meal
 	{
