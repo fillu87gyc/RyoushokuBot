@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Widget;
 using Android.OS;
-using CoreTweet;
+//using CoreTweet;
 using Android.Net;
 using Android.Content;
 using Android.Views;
@@ -20,7 +20,6 @@ namespace App3
 		const string ApiSecret = "FTHB63Vv7A4LizZbGDJTzLW86Oau0M6lQ0JmIvOV2fPVf82Vps";
 		public MainActivity()
 		{
-			cnt = 0;
 		}
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -47,7 +46,7 @@ namespace App3
 			pref = GetPreferences(FileCreationMode.Private);
 			if (pref.GetBoolean("IsEmpty", true) == false)
 			{
-				tokens = Tokens.Create(ApiKey, ApiSecret, pref.GetString("Token", ""), pref.GetString("Secret", ""));
+				tokens = CoreTweet.Tokens.Create(ApiKey, ApiSecret, pref.GetString("Token", ""), pref.GetString("Secret", ""));
 				FindViewById<TextView>(Resource.Id.textView1).Text = "認証に成功しました!";
 				timelineButton.Enabled = true;
 			}
@@ -152,11 +151,14 @@ namespace App3
 			txtTitle.Focusable = true;
 			txtTitle.FocusableInTouchMode = true;
 			FindViewById<Button>(Resource.Id.button2).Enabled = true;
-			session = OAuth.Authorize(ApiKey, ApiSecret);
+			session = CoreTweet.OAuth.Authorize(ApiKey, ApiSecret);
 			Uri uri = Uri.Parse(session.AuthorizeUri.ToString());
 			Intent i = new Intent(Intent.ActionView, uri);
 			StartActivity(i);
 		}
+		private Context context;
+
+		
 	}
 	enum Meal
 	{

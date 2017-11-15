@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 
 namespace App3
 {
@@ -23,10 +24,14 @@ namespace App3
 			//token.Statuses.Update(new { status = "でもついーと２" });
 			Toast.MakeText(context, "ツイートしました", ToastLength.Long).Show();
 
+			
+
 			switch (intent.GetIntExtra("Meal", 4))
 			{
 				case (int)Meal.breakfast:
+
 					break;
+
 				case (int)Meal.lunch:
 					break;
 				case (int)Meal.dinner:
@@ -37,77 +42,77 @@ namespace App3
 					break;
 			}
 		}
-
 	}
-	public class TimerSetter:Service
-	{
-		AlarmManager[] AlarmManager;
-		public TimerSetter()
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				AlarmManager = new AlarmManager[3];
-				AlarmManager[i] = (AlarmManager)GetSystemService(Context.AlarmService);
-			}
+	//public class DailyScheduler
+	//{
 
-		}
-		public override IBinder OnBind(Intent intent)
-		{
-			return null;
-		}
-		public void Breakfast(string[] keyList,Meal meal)
-		{
-			var alarmIntent =  new Intent();
+	//	private Context context;
+
+	//	public DailyScheduler(Context context)
+	//	{
+	//		this.context = context;
+	//	}
+
+	//	/*
+	//	 * duration_time(ミリ秒)後 launch_serviceを実行する
+	//	 * service_idはどのサービスかを区別する為のID(同じなら上書き)
+	//	 * 一回起動するとそのタイミングで毎日1回動き続ける
+	//	 */
+	//	 void Set(long duration_time, int service_id)
+	//	{
+	//		Intent intent = new Intent(context, typeof(MyBroadcastReceiver));
+
+	//		PendingIntent action = PendingIntent.GetService(context, service_id, intent,PendingIntentFlags.UpdateCurrent);
+	//		AlarmManager alarm = (AlarmManager)context.GetSystemService("alarm");
+	//		alarm.SetRepeating(AlarmType.Rtc,duration_time, AlarmManager.IntervalDay, action);
+	//	}
+
+	//	/*
+	//	 * 起動したい時刻(hour:minuite)を指定するバージョン
+	//	 * 指定した時刻で毎日起動する
+	//	 */
+	//	public void SetByTime(int hour, int minuite, int service_id)
+	//	{
+	//		//今日の目標時刻のカレンダーインスタンス作成
+	//		Java.Util.Calendar cal_target = Java.Util.Calendar.GetInstance(Java.Util.TimeZone.Default);
 			
-				alarmIntent = new Intent(this, typeof(MyBroadcastReceiver)); //アラームレシーバはブロードキャストを継承
-				alarmIntent.PutStringArrayListExtra("Keys", keyList);
-				alarmIntent.PutExtra("Meal", meal);
-			
+	//		cal_target.Set(CalendarField.HourOfDay, hour);
+	//		cal_target.Set(CalendarField.Minute, minuite);
+	//		cal_target.Set(CalendarField.Second, 0);
 
-			var pending = new PendingIntent[3];
-			for (int i = 0; i < pending.Length; i++)
-			{
-				pending[i] = PendingIntent.GetBroadcast(this, i, alarmIntent[i], PendingIntentFlags.UpdateCurrent);
-			}
+	//		//現在時刻のカレンダーインスタンス作成
+	//		Calendar cal_now = Calendar.GetInstance(Java.Util.TimeZone.Default);
 
-			var alarmManager = (AlarmManager)GetSystemService(AlarmService);
-			var cal = new Java.Util.Calendar[3];
-			for (int i = 0; i < cal.Length; i++)
-			{
-				cal[i] = Java.Util.Calendar.GetInstance(Java.Util.TimeZone.Default);
+	//		//ミリ秒取得
+	//		long target_ms = cal_target.TimeInMillis;
+	//		long now_ms = cal_now.TimeInMillis;
 
-				//明日の年、月、日を取得
-				cal[i].Add(Java.Util.CalendarField.DayOfYear, 1);
+	//		//今日ならそのまま指定
+	//		if (target_ms >= now_ms)
+	//		{
+	//			Set(target_ms, service_id);
+	//			//過ぎていたら明日の同時刻を指定
+	//		}
+	//		else
+	//		{
+	//			cal_target.Add(CalendarField.DayOfMonth, 1);
+	//			target_ms = cal_target.TimeInMillis;
+	//			Set( target_ms, service_id);
+	//		}
 
-				cal[i].Set(Java.Util.CalendarField.Year, cal[i].Get(Java.Util.CalendarField.Year));
-				cal[i].Set(Java.Util.CalendarField.Month, cal[i].Get(Java.Util.CalendarField.Month));
-				cal[i].Set(Java.Util.CalendarField.DayOfMonth, cal[i].Get(Java.Util.CalendarField.DayOfMonth));
-				cal[i].Set(Java.Util.CalendarField.HourOfDay, cal[i].Get(Java.Util.CalendarField.HourOfDay));
+	//	}
 
-				cal[i].Set(Java.Util.CalendarField.Minute, 20);
-				cal[i].Set(Java.Util.CalendarField.Second, 0);
-				cal[i].Set(Java.Util.CalendarField.Millisecond, 0);
-			}
-
-			cal[(int)Meal.breakfast].Set(Java.Util.CalendarField.HourOfDay, 7);
-			cal[(int)Meal.breakfast].Set(Java.Util.CalendarField.Minute, 15);
-
-			cal[(int)Meal.lunch].Set(Java.Util.CalendarField.HourOfDay, 11);
-
-			cal[(int)Meal.dinner].Set(Java.Util.CalendarField.HourOfDay, 17);
-
-			for (int i = 0; i < cal.Length; i++)
-			{
-				alarmManager.Set(AlarmType.RtcWakeup, cal[i].TimeInMillis, pending[i]);
-			}
-		}
-		public void Lunnch()
-		{
-
-		}
-		public	void Dinner()
-		{
-
-		}
+		/*
+		 * キャンセル用
+		 */
+		//public <T> void cancel(Class<T> launch_service, long wake_time, int service_id)
+		//{
+		//	Intent intent = new Intent(context, launch_service);
+		//	PendingIntent action = PendingIntent.getService(context, service_id, intent,
+		//			PendingIntent.FLAG_UPDATE_CURRENT);
+		//	AlarmManager alarm = (AlarmManager)context
+		//			.getSystemService(Context.ALARM_SERVICE);
+		//	alarm.cancel(action);
+		//}
 	}
 }
