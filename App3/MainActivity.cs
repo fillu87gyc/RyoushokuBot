@@ -8,7 +8,7 @@ using Android.Views;
 
 namespace App3
 {
-	
+
 	[Activity(Label = "App3", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
@@ -20,7 +20,7 @@ namespace App3
 		const string ApiSecret = "FTHB63Vv7A4LizZbGDJTzLW86Oau0M6lQ0JmIvOV2fPVf82Vps";
 		public MainActivity()
 		{
-			cnt = 0;
+
 		}
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -51,14 +51,15 @@ namespace App3
 				FindViewById<TextView>(Resource.Id.textView1).Text = "認証に成功しました!";
 				timelineButton.Enabled = true;
 			}
-
+			this.Window.AddFlags(WindowManagerFlags.TurnScreenOn);
 		}
 
 		private void FireTimerButton_Click(object sender, System.EventArgs e)
 		{
 			var alarmIntent = new Intent(this, typeof(MyBroadcastReceiver)); //アラームレシーバはブロードキャストを継承
-											 ////alarmIntent.PutExtra("title", cnt.ToString() + "回目の通知です");      //タイトルって名前でキーを指定する
-											 ////alarmIntent.PutExtra("message", "World!");
+			var alarmIntent2 = new Intent(this, typeof(MyBroadcastReceiver));
+			////alarmIntent.PutExtra("title", cnt.ToString() + "回目の通知です");      //タイトルって名前でキーを指定する
+																						 ////alarmIntent.PutExtra("message", "World!");
 			var keyList = new System.Collections.Generic.List<string>(4);
 			keyList.Add(ApiKey);
 			keyList.Add(ApiSecret);
@@ -66,23 +67,38 @@ namespace App3
 			keyList.Add(tokens.AccessTokenSecret);
 
 			alarmIntent.PutStringArrayListExtra("Keys", keyList);
-			var pending = PendingIntent.GetBroadcast(this, , alarmIntent, PendingIntentFlags.UpdateCurrent);
-
+			alarmIntent2.PutStringArrayListExtra("Keys", keyList);
 			var alarmManager = (AlarmManager)GetSystemService(AlarmService);
+			var alarmManager2 = (AlarmManager)GetSystemService(AlarmService);
 			Java.Util.Calendar cal = Java.Util.Calendar.GetInstance(Java.Util.TimeZone.Default);
- 
-			cal.Set(Java.Util.CalendarField.Year,		cal.Get(Java.Util.CalendarField.Year));
-			cal.Set(Java.Util.CalendarField.Month,		cal.Get(Java.Util.CalendarField.Month));
-			cal.Set(Java.Util.CalendarField.DayOfMonth,	cal.Get(Java.Util.CalendarField.DayOfMonth));
-			cal.Set(Java.Util.CalendarField.HourOfDay,	cal.Get(Java.Util.CalendarField.HourOfDay));
+
+			//cal.Set(Java.Util.CalendarField.Year,		cal.Get(Java.Util.CalendarField.Year));
+			//cal.Set(Java.Util.CalendarField.Month,		cal.Get(Java.Util.CalendarField.Month));
+			//cal.Set(Java.Util.CalendarField.DayOfMonth,	cal.Get(Java.Util.CalendarField.DayOfMonth));
+			//cal.Set(Java.Util.CalendarField.HourOfDay,	cal.Get(Java.Util.CalendarField.HourOfDay));
 			//cal.Set(Java.Util.CalendarField.Minute,		cal.Get(Java.Util.CalendarField.Minute));
 			//cal.Set(Java.Util.CalendarField.Second,		cal.Get(Java.Util.CalendarField.Second));
-			cal.Set(Java.Util.CalendarField.Minute, 21);
-			cal.Set(Java.Util.CalendarField.Second,0);
-			cal.Set(Java.Util.CalendarField.Millisecond, 0);
+			alarmIntent.PutExtra("num", "This is 1st");
+			var pending = PendingIntent.GetBroadcast(this, 0, alarmIntent, PendingIntentFlags.UpdateCurrent);
+
+			alarmIntent2.PutExtra("num", "this is 2th event!");
+			var pending2 = PendingIntent.GetBroadcast(this, 1, alarmIntent2, PendingIntentFlags.UpdateCurrent);
 
 
-			alarmManager.Set(AlarmType.RtcWakeup, cal.TimeInMillis, pending);
+			//cal.Set(Java.Util.CalendarField.Second, 35);
+			//alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalHalfHour / 30, pending);
+
+			var time = new Android.Text.Format.Time("Asia/Tokyo");
+			time.SetToNow();
+			string date = time.Year + "-" + (time.Month + 1) + "-" + time.MonthDay + "-"+time.Hour + "-" + time.Minute + "-" + time.Second;
+
+			Android.Util.Log.Debug("hogehoge",date+"\tLaunch time ");
+			cal.Add(Java.Util.CalendarField.Minute, 1);
+			alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalHour / 12, pending);
+
+			cal.Add(Java.Util.CalendarField.Minute, 2);
+			alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalHour / 12, pending2);
+
 		}
 
 		private void TimelineButton_Click(object sender, System.EventArgs e)
@@ -128,6 +144,20 @@ namespace App3
 			Intent i = new Intent(Intent.ActionView, uri);
 			StartActivity(i);
 		}
+		public void saveToFile(Android.Graphics.Bitmap bitmap,string imgname)
+		{
+			//保存先のパスとか      
+			ContextWrapper cw = new ContextWrapper(this.ApplicationContext);
+			Java.IO.File file = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDcim);
+			Java.IO.File myfile = new Java.IO.File(file, imgname);
+
+			//保存
+			using (var os = new System.IO.FileStream(myfile.AbsolutePath, System.IO.FileMode.Create))
+			{
+				bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, os);
+			}
+		}
+
 	}
 	enum Meal
 	{

@@ -44,8 +44,11 @@ namespace App3
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040007
-			public const int TimeLine = 2130968583;
+			// aapt resource value: 0x7f040005
+			public const int PickButton = 2130968581;
+			
+			// aapt resource value: 0x7f040008
+			public const int TimeLine = 2130968584;
 			
 			// aapt resource value: 0x7f040004
 			public const int TimerFireButtou = 2130968580;
@@ -56,20 +59,20 @@ namespace App3
 			// aapt resource value: 0x7f040003
 			public const int button2 = 2130968579;
 			
-			// aapt resource value: 0x7f040005
-			public const int editText1 = 2130968581;
+			// aapt resource value: 0x7f040006
+			public const int editText1 = 2130968582;
 			
 			// aapt resource value: 0x7f040001
 			public const int gridLayout1 = 2130968577;
 			
-			// aapt resource value: 0x7f040006
-			public const int scrollView1 = 2130968582;
+			// aapt resource value: 0x7f040007
+			public const int scrollView1 = 2130968583;
 			
 			// aapt resource value: 0x7f040000
 			public const int textView1 = 2130968576;
 			
-			// aapt resource value: 0x7f040008
-			public const int timeLimeUpdate = 2130968584;
+			// aapt resource value: 0x7f040009
+			public const int timeLimeUpdate = 2130968585;
 			
 			static Id()
 			{
