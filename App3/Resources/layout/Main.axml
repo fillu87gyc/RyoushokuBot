@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <TextView
+        android:text="認証が完了していません。"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1" />
+<!--
+  <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button"
+        android:layout_weight="1">
+    </Button>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button"
+        android:layout_weight="1">
+    </Button>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button"
+        android:layout_weight="1">
+    </Button>
+</LinearLayout>
+-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="46.0dp"
+        android:id="@+id/gridLayout1"
+        android:layout_marginRight="0.0dp"
+        android:layout_marginBottom="0.0dp"
+        android:layout_marginLeft="0.0dp">
+        <Button
+            android:layout_weight="1"
+            android:text="セッション"
+            android:id="@+id/button1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_weight="1"
+            android:text="PIN認証"
+            android:id="@+id/button2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/TimerFireButtou"
+            android:text="タイマ"
+            android:layout_marginLeft="0.0dp" />
+        <Button
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/PickButton"
+            android:text="画像選択" />
+    </LinearLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText1"
+        android:focusable="false"
+        android:layout_marginTop="0.0dp" />
+    <ScrollView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="396.5dp"
+        android:id="@+id/scrollView1">
+        <TextView
+            android:inputType="textMultiLine"
+            android:singleLine="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/TimeLine"
+            android:text="タイムラインが出力されます"
+            android:layout_marginBottom="0.0dp"
+            android:background="#00000000" />
+    </ScrollView>
+    <Button
+        android:text="タイムライン更新"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeLimeUpdate"
+        android:layout_marginTop="0.0dp" />
+</LinearLayout>
