@@ -51,54 +51,48 @@ namespace App3
 				FindViewById<TextView>(Resource.Id.textView1).Text = "認証に成功しました!";
 				timelineButton.Enabled = true;
 			}
-			this.Window.AddFlags(WindowManagerFlags.TurnScreenOn);
+			//this.Window.AddFlags(WindowManagerFlags.TurnScreenOn);
 		}
 
 		private void FireTimerButton_Click(object sender, System.EventArgs e)
 		{
-			var alarmIntent = new Intent(this, typeof(MyBroadcastReceiver)); //アラームレシーバはブロードキャストを継承
+			var alarmIntent = new Intent(this, typeof(MyBroadcastReceiver));
 			var alarmIntent2 = new Intent(this, typeof(MyBroadcastReceiver));
-			////alarmIntent.PutExtra("title", cnt.ToString() + "回目の通知です");      //タイトルって名前でキーを指定する
-																						 ////alarmIntent.PutExtra("message", "World!");
-			var keyList = new System.Collections.Generic.List<string>(4);
-			keyList.Add(ApiKey);
-			keyList.Add(ApiSecret);
-			keyList.Add(tokens.AccessToken);
-			keyList.Add(tokens.AccessTokenSecret);
+			var alarmIntent3 = new Intent(this, typeof(MyBroadcastReceiver));
+			var keyList = new System.Collections.Generic.List<string>(4)
+			{
+				ApiKey,
+				ApiSecret,
+				tokens.AccessToken,
+				tokens.AccessTokenSecret
+			};
 
-			alarmIntent.PutStringArrayListExtra("Keys", keyList);
+			alarmIntent. PutStringArrayListExtra("Keys", keyList);
 			alarmIntent2.PutStringArrayListExtra("Keys", keyList);
-			var alarmManager = (AlarmManager)GetSystemService(AlarmService);
+			alarmIntent3.PutStringArrayListExtra("Keys", keyList);
+			var alarmManager  = (AlarmManager)GetSystemService(AlarmService);
 			var alarmManager2 = (AlarmManager)GetSystemService(AlarmService);
-			Java.Util.Calendar cal = Java.Util.Calendar.GetInstance(Java.Util.TimeZone.Default);
+			var alarmManager3 = (AlarmManager)GetSystemService(AlarmService);
 
-			//cal.Set(Java.Util.CalendarField.Year,		cal.Get(Java.Util.CalendarField.Year));
-			//cal.Set(Java.Util.CalendarField.Month,		cal.Get(Java.Util.CalendarField.Month));
-			//cal.Set(Java.Util.CalendarField.DayOfMonth,	cal.Get(Java.Util.CalendarField.DayOfMonth));
-			//cal.Set(Java.Util.CalendarField.HourOfDay,	cal.Get(Java.Util.CalendarField.HourOfDay));
-			//cal.Set(Java.Util.CalendarField.Minute,		cal.Get(Java.Util.CalendarField.Minute));
-			//cal.Set(Java.Util.CalendarField.Second,		cal.Get(Java.Util.CalendarField.Second));
-			alarmIntent.PutExtra("num", "This is 1st");
-			var pending = PendingIntent.GetBroadcast(this, 0, alarmIntent, PendingIntentFlags.UpdateCurrent);
-
-			alarmIntent2.PutExtra("num", "this is 2th event!");
+			var pending  = PendingIntent.GetBroadcast(this, 0, alarmIntent, PendingIntentFlags.UpdateCurrent);
 			var pending2 = PendingIntent.GetBroadcast(this, 1, alarmIntent2, PendingIntentFlags.UpdateCurrent);
+			var pending3 = PendingIntent.GetBroadcast(this, 2, alarmIntent3, PendingIntentFlags.UpdateCurrent);
+			var cal = new MyCalendar();
+			cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
 
+			cal.Set(Java.Util.CalendarField.Minute, 10);
+			cal.Set(Java.Util.CalendarField.Hour, 7);
+			alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending);
 
-			//cal.Set(Java.Util.CalendarField.Second, 35);
-			//alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalHalfHour / 30, pending);
+			cal.Set(Java.Util.CalendarField.Minute, 20);
+			cal.Set(Java.Util.CalendarField.Hour, 11);
+			alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending2);
 
-			var time = new Android.Text.Format.Time("Asia/Tokyo");
-			time.SetToNow();
-			string date = time.Year + "-" + (time.Month + 1) + "-" + time.MonthDay + "-"+time.Hour + "-" + time.Minute + "-" + time.Second;
+			cal.Set(Java.Util.CalendarField.Minute, 40);
+			cal.Set(Java.Util.CalendarField.Hour, 17);
+			alarmManager3.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending3);
 
-			Android.Util.Log.Debug("hogehoge",date+"\tLaunch time ");
-			cal.Add(Java.Util.CalendarField.Minute, 1);
-			alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalHour / 12, pending);
-
-			cal.Add(Java.Util.CalendarField.Minute, 2);
-			alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalHour / 12, pending2);
-
+			Toast.MakeText(this, "タイマーセット!!", ToastLength.Long).Show();
 		}
 
 		private void TimelineButton_Click(object sender, System.EventArgs e)
@@ -143,19 +137,6 @@ namespace App3
 			Uri uri = Uri.Parse(session.AuthorizeUri.ToString());
 			Intent i = new Intent(Intent.ActionView, uri);
 			StartActivity(i);
-		}
-		public void saveToFile(Android.Graphics.Bitmap bitmap,string imgname)
-		{
-			//保存先のパスとか      
-			ContextWrapper cw = new ContextWrapper(this.ApplicationContext);
-			Java.IO.File file = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDcim);
-			Java.IO.File myfile = new Java.IO.File(file, imgname);
-
-			//保存
-			using (var os = new System.IO.FileStream(myfile.AbsolutePath, System.IO.FileMode.Create))
-			{
-				bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, os);
-			}
 		}
 
 	}
