@@ -47,6 +47,7 @@
         <Button
             android:layout_weight="1"
             android:text="セッション"
+            android:textSize="12sp"
             android:id="@+id/button1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />

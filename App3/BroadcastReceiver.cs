@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Java.Util.Logging;
-
+using Java.Util;
 
 namespace App3
 {
@@ -23,15 +23,18 @@ namespace App3
 			//インテントをキャッチ
 			var keys = intent.GetStringArrayListExtra("Keys");
 			var token = CoreTweet.Tokens.Create(keys[0], keys[1], keys[2], keys[3]);
-			var cal = new MyCalendar();
-			string picName = cal.dayofweek.ToString();
-			var tweet = "本日 " + cal.year + "年" + cal.month + "月" + cal.day + "日の";
-			if (cal.hour == 7)
+			var cal = Calendar.GetInstance(Locale.Default);
+			string picName = (cal.Get(CalendarField.DayOfWeek) - 2).ToString();
+			if (picName == "-1") picName = "6";
+			var tweet = "本日 " + cal.Get(CalendarField.Year) + "年" + (cal.Get(CalendarField.Month) + 1).ToString() + 
+				"月" + cal.Get(CalendarField.DayOfMonth) + "日の";
+			int hour = cal.Get(CalendarField.HourOfDay);
+			if (hour== 7)
 			{
 				picName += 0;
 				tweet += "朝食はこちらです";
 			}
-			else if (cal.hour == 11)
+			else if (hour == 11)
 			{
 				picName += 1;
 				tweet += "昼食はこちらです";

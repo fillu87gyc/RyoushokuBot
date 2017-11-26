@@ -5,6 +5,7 @@ using CoreTweet;
 using Android.Net;
 using Android.Content;
 using Android.Views;
+using Java.Util;
 
 namespace App3
 {
@@ -67,31 +68,67 @@ namespace App3
 				tokens.AccessTokenSecret
 			};
 
-			alarmIntent. PutStringArrayListExtra("Keys", keyList);
+			alarmIntent.PutStringArrayListExtra("Keys", keyList);
 			alarmIntent2.PutStringArrayListExtra("Keys", keyList);
 			alarmIntent3.PutStringArrayListExtra("Keys", keyList);
-			var alarmManager  = (AlarmManager)GetSystemService(AlarmService);
+			var alarmManager = (AlarmManager)GetSystemService(AlarmService);
 			var alarmManager2 = (AlarmManager)GetSystemService(AlarmService);
 			var alarmManager3 = (AlarmManager)GetSystemService(AlarmService);
 
-			var pending  = PendingIntent.GetBroadcast(this, 0, alarmIntent, PendingIntentFlags.UpdateCurrent);
+			var pending = PendingIntent.GetBroadcast(this, 0, alarmIntent, PendingIntentFlags.UpdateCurrent);
 			var pending2 = PendingIntent.GetBroadcast(this, 1, alarmIntent2, PendingIntentFlags.UpdateCurrent);
 			var pending3 = PendingIntent.GetBroadcast(this, 2, alarmIntent3, PendingIntentFlags.UpdateCurrent);
-			var cal = new MyCalendar();
-			cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
-
+			var cal = Calendar.GetInstance(Locale.Japan);
+			//cal.Add(Java.Util.CalendarField.DayOfMonth, 1);a
+			cal.Set(Java.Util.CalendarField.Millisecond, 0);
+			cal.Set(Java.Util.CalendarField.Second, 0);
+			var tl = FindViewById<TextView>(Resource.Id.TimeLine);
+			tl.Text = "";
+			long temp = cal.TimeInMillis;
+			cal.Set(CalendarField.Minute, 40);
+			cal.Set(CalendarField.HourOfDay, 17);
+			if (cal.TimeInMillis < temp)
+			{
+				//過去の時間を指定してしまった
+				cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
+				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
+				alarmManager3.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending3);
+				cal.Add(Java.Util.CalendarField.DayOfMonth, -1);
+			}
+			else
+			{
+				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
+				alarmManager3.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending3);
+			}
+			cal.Set(CalendarField.Minute, 20);
+			cal.Set(CalendarField.HourOfDay, 11);
+			if (cal.TimeInMillis < temp)
+			{
+				//過去の時間を指定してしまった
+				cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
+				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
+				alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending2);
+				cal.Add(Java.Util.CalendarField.DayOfMonth, -1);
+			}
+			else
+			{
+				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
+				alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending2);
+			}
 			cal.Set(Java.Util.CalendarField.Minute, 10);
-			cal.Set(Java.Util.CalendarField.Hour, 7);
-			alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending);
-
-			cal.Set(Java.Util.CalendarField.Minute, 20);
-			cal.Set(Java.Util.CalendarField.Hour, 11);
-			alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending2);
-
-			cal.Set(Java.Util.CalendarField.Minute, 40);
-			cal.Set(Java.Util.CalendarField.Hour, 17);
-			alarmManager3.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending3);
-
+			cal.Set(Java.Util.CalendarField.HourOfDay, 7);
+			if (cal.TimeInMillis < temp)
+			{
+				cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
+				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
+				alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending);
+				cal.Add(Java.Util.CalendarField.DayOfMonth, -1);
+			}
+			else
+			{
+				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
+				alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending);
+			}
 			Toast.MakeText(this, "タイマーセット!!", ToastLength.Long).Show();
 		}
 
@@ -106,6 +143,7 @@ namespace App3
 				TimeLine.Text += item.Text + "\n";
 				TimeLine.Text += "RT : " + item.RetweetCount + "   Fav :" + item.FavoriteCount + "\n";
 			}
+			//var cal = Java.Util.Calendar.GetInstance(Java.Util.Locale.Japan);
 		}
 
 		private void PinButton_Click(object sender, System.EventArgs e)

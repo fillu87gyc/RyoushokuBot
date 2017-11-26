@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
-
+/*
 namespace App3
 {
 	class MyCalendar
@@ -51,10 +51,12 @@ namespace App3
 		public void Add(CalendarField field, int ad)
 		{
 			calendar.Add(field, ad);
+			Refresh();
 		}
 		public void Set(CalendarField field, int ad)
 		{
 			calendar.Set(field, ad);
+			Refresh();
 		}
 		public long TimeInMillis => calendar.TimeInMillis;
 		//public override void Add([GeneratedEnum] CalendarField field, int amount)
@@ -98,3 +100,5 @@ namespace App3
 
 	}
 }
+
+	*/
