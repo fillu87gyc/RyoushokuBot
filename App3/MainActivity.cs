@@ -34,15 +34,16 @@ namespace App3
 			button.Click += Button_Click;
 			var pinButton = FindViewById<Button>(Resource.Id.button2);
 			pinButton.Click += PinButton_Click;
-			var timelineButton = FindViewById<Button>(Resource.Id.timeLimeUpdate);
-			timelineButton.Click += TimelineButton_Click;
 			var txtTitle = FindViewById<EditText>(Resource.Id.editText1);
 
-			timelineButton.Enabled = false;
 			pinButton.Enabled = false;
 
 			var FireTimerButton = FindViewById<Button>(Resource.Id.TimerFireButtou);
 			FireTimerButton.Click += FireTimerButton_Click;
+
+			var PickButton = FindViewById<Button>(Resource.Id.PickButton);
+			PickButton.Click += PickButton_Click;
+
 
 			editor = GetPreferences(FileCreationMode.Private).Edit();
 			pref = GetPreferences(FileCreationMode.Private);
@@ -50,9 +51,31 @@ namespace App3
 			{
 				tokens = Tokens.Create(ApiKey, ApiSecret, pref.GetString("Token", ""), pref.GetString("Secret", ""));
 				FindViewById<TextView>(Resource.Id.textView1).Text = "認証に成功しました!";
-				timelineButton.Enabled = true;
 			}
-			//this.Window.AddFlags(WindowManagerFlags.TurnScreenOn);
+
+			var cal = Calendar.GetInstance(Locale.Default);
+			string imgName =  (cal.Get(CalendarField.DayOfWeek) - 2).ToString();
+			if (imgName== "-1") imgName = "6";
+			int hour = cal.Get(CalendarField.HourOfDay);
+			if (hour <= 7) imgName += 0;
+			else if (hour <= 11) imgName += 1;
+			else imgName += 2;
+			try
+			{
+				var bitmap = Android.Graphics.BitmapFactory.DecodeFile(@"/storage/emulated/0/Ryoshoku/加工済み/" + imgName+".gif");
+				FindViewById<ImageView>(Resource.Id.imageView1).SetImageBitmap(bitmap);
+			}
+			catch (System.Exception)
+			{
+				//ポケモンゲットだぜ！
+				Toast.MakeText(this, "画像が見つからない!!", ToastLength.Long).Show();
+			}
+			
+		}
+
+		private void PickButton_Click(object sender, System.EventArgs e)
+		{
+			tokens.Statuses.Update(status: "認証確認ツイートです");
 		}
 
 		private void FireTimerButton_Click(object sender, System.EventArgs e)
@@ -82,8 +105,6 @@ namespace App3
 			//cal.Add(Java.Util.CalendarField.DayOfMonth, 1);a
 			cal.Set(Java.Util.CalendarField.Millisecond, 0);
 			cal.Set(Java.Util.CalendarField.Second, 0);
-			var tl = FindViewById<TextView>(Resource.Id.TimeLine);
-			tl.Text = "";
 			long temp = cal.TimeInMillis;
 			cal.Set(CalendarField.Minute, 40);
 			cal.Set(CalendarField.HourOfDay, 17);
@@ -91,13 +112,11 @@ namespace App3
 			{
 				//過去の時間を指定してしまった
 				cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
-				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
 				alarmManager3.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending3);
 				cal.Add(Java.Util.CalendarField.DayOfMonth, -1);
 			}
 			else
 			{
-				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
 				alarmManager3.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending3);
 			}
 			cal.Set(CalendarField.Minute, 20);
@@ -106,13 +125,11 @@ namespace App3
 			{
 				//過去の時間を指定してしまった
 				cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
-				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
 				alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending2);
 				cal.Add(Java.Util.CalendarField.DayOfMonth, -1);
 			}
 			else
 			{
-				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
 				alarmManager2.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending2);
 			}
 			cal.Set(Java.Util.CalendarField.Minute, 10);
@@ -120,30 +137,14 @@ namespace App3
 			if (cal.TimeInMillis < temp)
 			{
 				cal.Add(Java.Util.CalendarField.DayOfMonth, 1);
-				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
 				alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending);
 				cal.Add(Java.Util.CalendarField.DayOfMonth, -1);
 			}
 			else
 			{
-				tl.Text += cal.Get(CalendarField.DayOfMonth) + "-" + cal.Get(CalendarField.HourOfDay) + "-" + cal.Get(CalendarField.Minute) + "\n";
 				alarmManager.SetRepeating(AlarmType.RtcWakeup, cal.TimeInMillis, AlarmManager.IntervalDay, pending);
 			}
 			Toast.MakeText(this, "タイマーセット!!", ToastLength.Long).Show();
-		}
-
-		private void TimelineButton_Click(object sender, System.EventArgs e)
-		{
-			var TimeLine = FindViewById<TextView>(Resource.Id.TimeLine);
-			TimeLine.Text = "";
-			foreach (var item in tokens.Statuses.HomeTimeline(count => 10))
-			{
-				TimeLine.Text += "-----\n";
-				TimeLine.Text += item.User.Name + "  (@" + item.User.ScreenName + ")" + "\n";
-				TimeLine.Text += item.Text + "\n";
-				TimeLine.Text += "RT : " + item.RetweetCount + "   Fav :" + item.FavoriteCount + "\n";
-			}
-			//var cal = Java.Util.Calendar.GetInstance(Java.Util.Locale.Japan);
 		}
 
 		private void PinButton_Click(object sender, System.EventArgs e)
@@ -153,7 +154,6 @@ namespace App3
 			{
 				//認証成功時
 				FindViewById<TextView>(Resource.Id.textView1).Text = "認証に成功しました!";
-				FindViewById<Button>(Resource.Id.timeLimeUpdate).Enabled = true;
 				editor.PutString("Token", tokens.AccessToken);
 				editor.PutString("Secret", tokens.AccessTokenSecret);
 				editor.PutBoolean("IsEmpty", false);

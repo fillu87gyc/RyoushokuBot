@@ -26,10 +26,10 @@ namespace App3
 			var cal = Calendar.GetInstance(Locale.Default);
 			string picName = (cal.Get(CalendarField.DayOfWeek) - 2).ToString();
 			if (picName == "-1") picName = "6";
-			var tweet = "本日 " + cal.Get(CalendarField.Year) + "年" + (cal.Get(CalendarField.Month) + 1).ToString() + 
+			var tweet = "本日 " + cal.Get(CalendarField.Year) + "年" + (cal.Get(CalendarField.Month) + 1).ToString() +
 				"月" + cal.Get(CalendarField.DayOfMonth) + "日の";
 			int hour = cal.Get(CalendarField.HourOfDay);
-			if (hour== 7)
+			if (hour == 7)
 			{
 				picName += 0;
 				tweet += "朝食はこちらです";
@@ -44,36 +44,33 @@ namespace App3
 				picName += 2;
 				tweet += "夕食はこちらです";
 			}
-			//for (int i = 0; i < cal.dayofweek; i++)
-			//{
-			//	tweet += " ";
-			//}
-			//tweet += ".";
+
 			picName += ".gif";
 			CoreTweet.MediaUploadResult first = null;
-			try
+			var imgfile = new System.IO.FileInfo(local + picName);
+			if (imgfile.Exists)
 			{
-				first = token.Media.Upload(media: new System.IO.FileInfo(local + picName));
-				token.Statuses.Update(
-					status: tweet,
-					media_ids: new long[] { first.MediaId }
-				);
+				try
+				{
+					first = token.Media.Upload(media: new System.IO.FileInfo(local + picName));
+					token.Statuses.Update(
+						status: tweet,
+						media_ids: new long[] { first.MediaId }
+					);
+				}
+				catch (Exception)
+				{
+					tweet = "画像検索中にエラーが発生しました\n管理者に連絡してください\n";
+					token.Statuses.Update(status: tweet);
+				}
 			}
-			catch (Exception)
+			else
 			{
-				tweet = "画像検索中にエラーが発生しました\n管理者に連絡してください\n";
+				tweet = "本日 " + cal.Get(CalendarField.Year) + "年" + (cal.Get(CalendarField.Month) + 1).ToString() +
+				"月" + cal.Get(CalendarField.DayOfMonth) + "日の寮食はありません";
 				token.Statuses.Update(status: tweet);
 			}
 
-
 		}
-		//void debug(Context context, Intent intent)
-		//{
-		//	Toast.MakeText(context, "ツイートしました これは" + intent.GetStringExtra("num"), ToastLength.Long).Show();
-		//	var time = new Android.Text.Format.Time("Asia/Tokyo");
-		//	time.SetToNow();
-		//	string date = time.Year + "-" + (time.Month + 1) + "-" + time.MonthDay + "-" + time.Hour + "-" + time.Minute + "-" + time.Second + "";
-		//	Android.Util.Log.Debug("hogehoge", date + "\t" + intent.GetStringExtra("num"));
-		//}
 	}
 }
