@@ -66,8 +66,11 @@ namespace App3
 			}
 			else
 			{
+				string break_lunch_dinner =
+					cal.Get(CalendarField.HourOfDay) < 9 ? "朝" :
+					cal.Get(CalendarField.HourOfDay) < 15 ? "昼" : "夕";
 				tweet = "本日 " + cal.Get(CalendarField.Year) + "年" + (cal.Get(CalendarField.Month) + 1).ToString() +
-				"月" + cal.Get(CalendarField.DayOfMonth) + "日の寮食はありません";
+				"月" + cal.Get(CalendarField.DayOfMonth) + "日の"+break_lunch_dinner+"食はありません";
 				token.Statuses.Update(status: tweet);
 			}
 

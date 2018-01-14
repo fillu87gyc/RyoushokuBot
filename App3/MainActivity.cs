@@ -58,8 +58,10 @@ namespace App3
 			if (imgName== "-1") imgName = "6";
 			int hour = cal.Get(CalendarField.HourOfDay);
 			if (hour <= 7) imgName += 0;
-			else if (hour <= 11) imgName += 1;
-			else imgName += 2;
+			else if (hour <= 12) imgName += 1;
+			else if (hour <= 19) imgName += 2;
+			else imgName = (int.Parse(imgName)+1).ToString() + 0;
+			if (imgName == "70") imgName = "00";
 			try
 			{
 				var bitmap = Android.Graphics.BitmapFactory.DecodeFile(@"/storage/emulated/0/Ryoshoku/加工済み/" + imgName+".gif");
